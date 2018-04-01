@@ -1,12 +1,12 @@
 package com.zengyu;
 
-import com.zengyu.QRException.InvalidColorException;
-import com.zengyu.QRException.InvalidLengthException;
-import com.zengyu.QRException.InvalidPathException;
-
+/**
+ * 对外接口
+ * 
+ * @author Agent ZengYu
+ *
+ */
 public interface IQR {
-	void encode();
-
 	void encode(String content);
 
 	void encode(String content, String outputPath);
@@ -30,22 +30,4 @@ public interface IQR {
 	 *            二维码颜色
 	 */
 	void encode(String content, String outputPath, String logoPath, String qrcodeSize, String qrcodeColor);
-
-	/**
-	 * 格式化参数
-	 * 
-	 * @param content
-	 * @param outputPath
-	 * @param logoPath
-	 * @param qrcodeSize
-	 * @param qrcodeColor
-	 * @throws InvalidPathException
-	 *             无效路径异常
-	 * @throws InvalidLengthException
-	 *             无效长度异常
-	 * @throws InvalidColorException
-	 *             无效颜色异常
-	 */
-	void formatParams(String content, String outputPath, String logoPath, String qrcodeSize, String qrcodeColor)
-			throws InvalidPathException, InvalidLengthException, InvalidColorException;
 }
