@@ -2,7 +2,7 @@ package com.zengyu;
 
 public class QRException {
 	/**
-	 * ¿ÕÄÚÈÝÒì³£
+	 * ç©ºå†…å®¹å¼‚å¸¸
 	 * 
 	 * @author Agent ZengYu
 	 *
@@ -16,7 +16,7 @@ public class QRException {
 	}
 
 	/**
-	 * Â·¾¶ÎÞÐ§Òì³£
+	 * è·¯å¾„æ— æ•ˆå¼‚å¸¸
 	 * 
 	 * @author Agent ZengYu
 	 *
@@ -30,7 +30,7 @@ public class QRException {
 	}
 
 	/**
-	 * ³¤¶ÈÎÞÐ§Òì³£
+	 * é•¿åº¦æ— æ•ˆå¼‚å¸¸
 	 * 
 	 * @author Agent ZengYu
 	 *
@@ -44,7 +44,7 @@ public class QRException {
 	}
 
 	/**
-	 * ÑÕÉ«ÎÞÐ§Òì³£
+	 * é¢œè‰²æ— æ•ˆå¼‚å¸¸
 	 * 
 	 * @author Agent ZengYu
 	 *

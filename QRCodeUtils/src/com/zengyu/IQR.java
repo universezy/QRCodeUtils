@@ -3,14 +3,14 @@ package com.zengyu;
 import java.awt.image.BufferedImage;
 
 /**
- * ¶ÔÍâ½Ó¿Ú
+ * å¯¹å¤–æ¥å£
  * 
  * @author Agent ZengYu
  *
  */
 public interface IQR {
 	BufferedImage getQrcodeImage();
-	
+
 	QRUtils encode(String content);
 
 	QRUtils encode(String content, String outputPath);
@@ -20,18 +20,18 @@ public interface IQR {
 	QRUtils encode(String content, String outputPath, String logoPath, String qrcodeSize);
 
 	/**
-	 * Éú³É¶şÎ¬Âë
+	 * ç”ŸæˆäºŒç»´ç 
 	 * 
 	 * @param content
-	 *            ¶şÎ¬ÂëÄÚÈİ
+	 *            äºŒç»´ç å†…å®¹
 	 * @param outputPath
-	 *            Êä³öÂ·¾¶
+	 *            è¾“å‡ºè·¯å¾„
 	 * @param logoPath
-	 *            ±êÖ¾Â·¾¶
+	 *            æ ‡å¿—è·¯å¾„
 	 * @param qrcodeSize
-	 *            ¶şÎ¬Âë±ß³¤
+	 *            äºŒç»´ç è¾¹é•¿
 	 * @param qrcodeColor
-	 *            ¶şÎ¬ÂëÑÕÉ«
+	 *            äºŒç»´ç é¢œè‰²
 	 */
 	QRUtils encode(String content, String outputPath, String logoPath, String qrcodeSize, String qrcodeColor);
 }

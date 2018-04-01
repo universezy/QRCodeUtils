@@ -27,64 +27,64 @@ import com.zengyu.QRException.InvalidPathException;
 import com.zengyu.QRException.NullContentException;
 
 public class QRUtils implements IQR {
-	// ¶şÎ¬ÂëÄÚÈİ
+	// äºŒç»´ç å†…å®¹
 	private String content = "";
 	
-	// Êä³öÂ·¾¶
+	// è¾“å‡ºè·¯å¾„
 	private String outputPath = "";
 	
-	// ±êÖ¾Â·¾¶
+	// æ ‡å¿—è·¯å¾„
 	private String logoPath = "";
 	
-	// ±êÖ¾±ß³¤£¬Îª¶şÎ¬Âë±ß³¤µÄ1/5
+	// æ ‡å¿—è¾¹é•¿ï¼Œä¸ºäºŒç»´ç è¾¹é•¿çš„1/5
 	private int logoSize = 80;
 	
-	// ¶şÎ¬Âë±ß³¤£¬Ä¬ÈÏ400
+	// äºŒç»´ç è¾¹é•¿ï¼Œé»˜è®¤400
 	private int qrcodeSize = 600;
 	
-	// ¶şÎ¬Âë±ß¾à£¬Îª¶şÎ¬Âë±ß³¤µÄ1/100
+	// äºŒç»´ç è¾¹è·ï¼Œä¸ºäºŒç»´ç è¾¹é•¿çš„1/100
 	private int qrcodeMargin = 4;
 	
-	// ¶şÎ¬ÂëÑÕÉ«£¬Ä¬ÈÏºÚÉ«
+	// äºŒç»´ç é¢œè‰²ï¼Œé»˜è®¤é»‘è‰²
 	private int qrcodeColor = 0xff000000;
 	
-	// ±³¾°ÑÕÉ«£¬Ä¬ÈÏ°×É«
+	// èƒŒæ™¯é¢œè‰²ï¼Œé»˜è®¤ç™½è‰²
 	private static final int WHITE = 0xFFFFFFFF;
 	
-	// Êä³öÎÄ¼ş¸ñÊ½
+	// è¾“å‡ºæ–‡ä»¶æ ¼å¼
 	private static final String FORMAT = "jpg";
 	
-	// ¶şÎ¬ÂëÍ¼Æ¬
+	// äºŒç»´ç å›¾ç‰‡
 	private BufferedImage qrcodeImage;
 
 	/**
-	 * Éú³É¹ı³Ì
+	 * ç”Ÿæˆè¿‡ç¨‹
 	 */
 	private QRUtils encode() {
-		// ÉèÖÃ±àÂë²ÎÊı
+		// è®¾ç½®ç¼–ç å‚æ•°
 		Hashtable<EncodeHintType, Object> hints = new Hashtable<>();
 		hints.put(EncodeHintType.ERROR_CORRECTION, ErrorCorrectionLevel.H);
 		hints.put(EncodeHintType.CHARACTER_SET, CharacterSetECI.UTF8);
 		hints.put(EncodeHintType.MARGIN, qrcodeMargin);
 		try {
-			// Éú³É¶şÎ¬Âë¾ØÕó
+			// ç”ŸæˆäºŒç»´ç çŸ©é˜µ
 			BitMatrix bitMatrix = new MultiFormatWriter().encode(content, BarcodeFormat.QR_CODE, qrcodeSize, qrcodeSize,
 					hints);
 			int qrcodeWidth = bitMatrix.getWidth();
 			int qrcodeHeight = bitMatrix.getHeight();
-			// Éú³É¶şÎ¬ÂëÍ¼Æ¬
+			// ç”ŸæˆäºŒç»´ç å›¾ç‰‡
 			qrcodeImage = new BufferedImage(qrcodeWidth, qrcodeHeight, BufferedImage.TYPE_INT_RGB);
 			for (int x = 0; x < qrcodeWidth; x++) {
 				for (int y = 0; y < qrcodeHeight; y++) {
 					qrcodeImage.setRGB(x, y, (bitMatrix.get(x, y) ? qrcodeColor : WHITE));
 				}
 			}
-			// ÅĞ¶ÏÊÇ·ñ²åÈë±êÖ¾
+			// åˆ¤æ–­æ˜¯å¦æ’å…¥æ ‡å¿—
 			if (logoPath != "") {
 				File logoFile = new File(logoPath);
 				if (logoFile.exists()) {
 					Image logoImgSrc = ImageIO.read(new File(logoPath));
-					// Ñ¹Ëõ±êÖ¾
+					// å‹ç¼©æ ‡å¿—
 					int width = logoImgSrc.getWidth(null);
 					int height = logoImgSrc.getHeight(null);
 					if (width > logoSize) {
@@ -94,13 +94,13 @@ public class QRUtils implements IQR {
 						height = logoSize;
 					}
 					Image logoImg = logoImgSrc.getScaledInstance(width, height, Image.SCALE_SMOOTH);
-					// »æÖÆ±êÖ¾
+					// ç»˜åˆ¶æ ‡å¿—
 					BufferedImage bufferedImage = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
 					Graphics graphics = bufferedImage.getGraphics();
 					graphics.drawImage(logoImg, 0, 0, null);
 					graphics.dispose();
 					logoImgSrc = logoImg;
-					// ²åÈë±êÖ¾
+					// æ’å…¥æ ‡å¿—
 					Graphics2D graph = qrcodeImage.createGraphics();
 					int x = (qrcodeSize - width) / 2;
 					int y = (qrcodeSize - height) / 2;
@@ -111,7 +111,7 @@ public class QRUtils implements IQR {
 					graph.dispose();
 				}
 			}
-			// Êä³ö¶şÎ¬Âë
+			// è¾“å‡ºäºŒç»´ç 
 			if (outputPath != "") {
 				String outputName = "" + new Date().getTime() + ".jpg";
 				ImageIO.write(qrcodeImage, FORMAT, new File(outputPath + outputName));
@@ -172,7 +172,7 @@ public class QRUtils implements IQR {
 	}
 
 	/**
-	 * ¸ñÊ½»¯²ÎÊı
+	 * æ ¼å¼åŒ–å‚æ•°
 	 * 
 	 * @param content
 	 * @param outputPath
@@ -180,13 +180,13 @@ public class QRUtils implements IQR {
 	 * @param qrcodeSize
 	 * @param qrcodeColor
 	 * @throws NullContentException
-	 *             ¿ÕÄÚÈİÒì³£
+	 *             ç©ºå†…å®¹å¼‚å¸¸
 	 * @throws InvalidPathException
-	 *             Â·¾¶ÎŞĞ§Òì³£
+	 *             è·¯å¾„æ— æ•ˆå¼‚å¸¸
 	 * @throws InvalidLengthException
-	 *             ³¤¶ÈÎŞĞ§Òì³£
+	 *             é•¿åº¦æ— æ•ˆå¼‚å¸¸
 	 * @throws InvalidColorException
-	 *             ÑÕÉ«ÎŞĞ§Òì³£
+	 *             é¢œè‰²æ— æ•ˆå¼‚å¸¸
 	 */
 	private boolean formatParams(String content, String outputPath, String logoPath, String qrcodeSize,
 			String qrcodeColor)
