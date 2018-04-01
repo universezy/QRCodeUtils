@@ -1,5 +1,7 @@
 package com.zengyu;
 
+import java.awt.image.BufferedImage;
+
 /**
  * 对外接口
  * 
@@ -7,13 +9,15 @@ package com.zengyu;
  *
  */
 public interface IQR {
-	void encode(String content);
+	BufferedImage getQrcodeImage();
+	
+	QRUtils encode(String content);
 
-	void encode(String content, String outputPath);
+	QRUtils encode(String content, String outputPath);
 
-	void encode(String content, String outputPath, String logoPath);
+	QRUtils encode(String content, String outputPath, String logoPath);
 
-	void encode(String content, String outputPath, String logoPath, String qrcodeSize);
+	QRUtils encode(String content, String outputPath, String logoPath, String qrcodeSize);
 
 	/**
 	 * 生成二维码
@@ -29,5 +33,5 @@ public interface IQR {
 	 * @param qrcodeColor
 	 *            二维码颜色
 	 */
-	void encode(String content, String outputPath, String logoPath, String qrcodeSize, String qrcodeColor);
+	QRUtils encode(String content, String outputPath, String logoPath, String qrcodeSize, String qrcodeColor);
 }

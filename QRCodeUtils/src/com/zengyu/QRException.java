@@ -2,6 +2,20 @@ package com.zengyu;
 
 public class QRException {
 	/**
+	 * 空内容异常
+	 * 
+	 * @author Agent ZengYu
+	 *
+	 */
+	static class NullContentException extends RuntimeException {
+		private static final long serialVersionUID = 4527325632148649544L;
+
+		public NullContentException(String s) {
+			super(s);
+		}
+	}
+
+	/**
 	 * 路径无效异常
 	 * 
 	 * @author Agent ZengYu

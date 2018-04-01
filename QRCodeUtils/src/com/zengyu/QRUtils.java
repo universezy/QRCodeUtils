@@ -24,41 +24,43 @@ import com.google.zxing.qrcode.decoder.ErrorCorrectionLevel;
 import com.zengyu.QRException.InvalidColorException;
 import com.zengyu.QRException.InvalidLengthException;
 import com.zengyu.QRException.InvalidPathException;
+import com.zengyu.QRException.NullContentException;
 
 public class QRUtils implements IQR {
-	/**
-	 * 二维码内容
-	 */
+	// 二维码内容
 	private String content = "";
-	/**
-	 * 输出路径
-	 */
+	
+	// 输出路径
 	private String outputPath = "";
-	/**
-	 * 标志路径
-	 */
+	
+	// 标志路径
 	private String logoPath = "";
-	/**
-	 * 标志边长，为二维码边长的1/5
-	 */
+	
+	// 标志边长，为二维码边长的1/5
 	private int logoSize = 80;
-	/**
-	 * 二维码边长，默认400
-	 */
-	private int qrcodeSize = 400;
-	/**
-	 * 二维码边距，为二维码边长的1/100
-	 */
+	
+	// 二维码边长，默认400
+	private int qrcodeSize = 600;
+	
+	// 二维码边距，为二维码边长的1/100
 	private int qrcodeMargin = 4;
-	/**
-	 * 二维码颜色，默认黑色
-	 */
+	
+	// 二维码颜色，默认黑色
 	private int qrcodeColor = 0xff000000;
+	
+	// 背景颜色，默认白色
+	private static final int WHITE = 0xFFFFFFFF;
+	
+	// 输出文件格式
+	private static final String FORMAT = "jpg";
+	
+	// 二维码图片
+	private BufferedImage qrcodeImage;
 
 	/**
 	 * 生成过程
 	 */
-	private void encode() {
+	private QRUtils encode() {
 		// 设置编码参数
 		Hashtable<EncodeHintType, Object> hints = new Hashtable<>();
 		hints.put(EncodeHintType.ERROR_CORRECTION, ErrorCorrectionLevel.H);
@@ -71,10 +73,10 @@ public class QRUtils implements IQR {
 			int qrcodeWidth = bitMatrix.getWidth();
 			int qrcodeHeight = bitMatrix.getHeight();
 			// 生成二维码图片
-			BufferedImage qrcodeImage = new BufferedImage(qrcodeWidth, qrcodeHeight, BufferedImage.TYPE_INT_RGB);
+			qrcodeImage = new BufferedImage(qrcodeWidth, qrcodeHeight, BufferedImage.TYPE_INT_RGB);
 			for (int x = 0; x < qrcodeWidth; x++) {
 				for (int y = 0; y < qrcodeHeight; y++) {
-					qrcodeImage.setRGB(x, y, (bitMatrix.get(x, y) ? qrcodeColor : 0xffffffff));
+					qrcodeImage.setRGB(x, y, (bitMatrix.get(x, y) ? qrcodeColor : WHITE));
 				}
 			}
 			// 判断是否插入标志
@@ -110,40 +112,53 @@ public class QRUtils implements IQR {
 				}
 			}
 			// 输出二维码
-			String outputName = "" + new Date().getSeconds() + ".jpg";
-			ImageIO.write(qrcodeImage, outputName, new File(outputPath));
+			if (outputPath != "") {
+				String outputName = "" + new Date().getTime() + ".jpg";
+				ImageIO.write(qrcodeImage, FORMAT, new File(outputPath + outputName));
+				System.out.println("Output: " + outputPath + outputName);
+			}
+			System.out.println("Encoding successful.");
+			return this;
 		} catch (WriterException e) {
 			e.printStackTrace();
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+		System.out.println("Encoding failed.");
+		return null;
 	}
 
 	@Override
-	public void encode(String content) {
-		encode(content, null, null, null, null);
+	public BufferedImage getQrcodeImage() {
+		return qrcodeImage;
 	}
 
 	@Override
-	public void encode(String content, String outputPath) {
-		encode(content, outputPath, null, null, null);
+	public QRUtils encode(String content) {
+		return encode(content, null, null, null, null);
 	}
 
 	@Override
-	public void encode(String content, String outputPath, String logoPath) {
-		encode(content, outputPath, logoPath, null, null);
+	public QRUtils encode(String content, String outputPath) {
+		return encode(content, outputPath, null, null, null);
 	}
 
 	@Override
-	public void encode(String content, String outputPath, String logoPath, String qrcodeSize) {
-		encode(content, outputPath, logoPath, qrcodeSize, null);
+	public QRUtils encode(String content, String outputPath, String logoPath) {
+		return encode(content, outputPath, logoPath, null, null);
 	}
 
 	@Override
-	public void encode(String content, String outputPath, String logoPath, String qrcodeSize, String qrcodeColor) {
+	public QRUtils encode(String content, String outputPath, String logoPath, String qrcodeSize) {
+		return encode(content, outputPath, logoPath, qrcodeSize, null);
+	}
+
+	@Override
+	public QRUtils encode(String content, String outputPath, String logoPath, String qrcodeSize, String qrcodeColor) {
 		try {
-			formatParams(content, outputPath, logoPath, qrcodeSize, qrcodeColor);
-			encode();
+			if (formatParams(content, outputPath, logoPath, qrcodeSize, qrcodeColor)) {
+				return encode();
+			}
 		} catch (InvalidPathException e) {
 			e.printStackTrace();
 		} catch (InvalidLengthException e) {
@@ -153,6 +168,7 @@ public class QRUtils implements IQR {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+		return null;
 	}
 
 	/**
@@ -163,6 +179,8 @@ public class QRUtils implements IQR {
 	 * @param logoPath
 	 * @param qrcodeSize
 	 * @param qrcodeColor
+	 * @throws NullContentException
+	 *             空内容异常
 	 * @throws InvalidPathException
 	 *             路径无效异常
 	 * @throws InvalidLengthException
@@ -170,8 +188,14 @@ public class QRUtils implements IQR {
 	 * @throws InvalidColorException
 	 *             颜色无效异常
 	 */
-	private void formatParams(String content, String outputPath, String logoPath, String qrcodeSize, String qrcodeColor)
-			throws InvalidPathException, InvalidLengthException, InvalidColorException {
+	private boolean formatParams(String content, String outputPath, String logoPath, String qrcodeSize,
+			String qrcodeColor)
+			throws NullContentException, InvalidPathException, InvalidLengthException, InvalidColorException {
+		if (content == null || content.trim() == "") {
+			throw new NullContentException("The content can't be empty.");
+		} else {
+			this.content = content;
+		}
 		if (outputPath != null) {
 			if (outputPath.trim() == "") {
 				throw new InvalidPathException("The output path can't be empty string.");
@@ -202,15 +226,23 @@ public class QRUtils implements IQR {
 		}
 		if (qrcodeColor != null) {
 			try {
-				int color = Integer.parseInt(qrcodeColor, 16);
-				if (color == 0xffffffff) {
-					throw new InvalidLengthException("The QR code color can't be white.");
+				int color = 0;
+				if (qrcodeColor.length() == 7) {
+					color = Integer.parseInt(qrcodeColor.substring(1), 16);
+				} else if (qrcodeColor.length() == 10) {
+					color = Integer.parseInt(qrcodeColor.substring(4), 16);
 				} else {
-					this.qrcodeSize = color;
+					throw new InvalidColorException("Invalid rgb string.");
+				}
+				if (color == 0xffffffff) {
+					throw new InvalidColorException("The QR code color can't be white.");
+				} else {
+					this.qrcodeColor = color;
 				}
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
 		}
+		return true;
 	}
 }
