@@ -5,11 +5,11 @@ import java.awt.image.BufferedImage;
 /**
  * 对外接口
  * 
- * @author Agent ZengYu
+ * @author zengyu
  *
  */
 public interface IQR {
-	BufferedImage getQrcodeImage();
+	BufferedImage getQRCodeImage();
 
 	QRUtils encode(String content);
 
@@ -17,7 +17,7 @@ public interface IQR {
 
 	QRUtils encode(String content, String outputPath, String logoPath);
 
-	QRUtils encode(String content, String outputPath, String logoPath, String qrcodeSize);
+	QRUtils encode(String content, String outputPath, String logoPath, int qrcodeSize);
 
 	/**
 	 * 生成二维码
@@ -32,6 +32,25 @@ public interface IQR {
 	 *            二维码边长
 	 * @param qrcodeColor
 	 *            二维码颜色
+	 * @return 返回工具类本身
 	 */
-	QRUtils encode(String content, String outputPath, String logoPath, String qrcodeSize, String qrcodeColor);
+	QRUtils encode(String content, String outputPath, String logoPath, int qrcodeSize, String qrcodeColor);
+
+	/**
+	 * 输出文件
+	 * 
+	 * @param outputPath
+	 *            输出路径
+	 * @return 返回工具类本身
+	 */
+	QRUtils writeToFile(String outputPath);
+
+	/**
+	 * 解析二维码
+	 * 
+	 * @param inputPath
+	 *            输入路径
+	 * @return 解析出的字符串
+	 */
+	String decode(String inputPath);
 }

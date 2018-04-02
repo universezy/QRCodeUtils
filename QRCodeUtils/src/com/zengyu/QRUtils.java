@@ -8,6 +8,7 @@ import java.awt.Shape;
 import java.awt.geom.RoundRectangle2D;
 import java.awt.image.BufferedImage;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.Date;
 import java.util.Hashtable;
@@ -15,45 +16,59 @@ import java.util.Hashtable;
 import javax.imageio.ImageIO;
 
 import com.google.zxing.BarcodeFormat;
+import com.google.zxing.Binarizer;
+import com.google.zxing.BinaryBitmap;
+import com.google.zxing.DecodeHintType;
 import com.google.zxing.EncodeHintType;
+import com.google.zxing.LuminanceSource;
+import com.google.zxing.MultiFormatReader;
 import com.google.zxing.MultiFormatWriter;
+import com.google.zxing.NotFoundException;
+import com.google.zxing.Result;
 import com.google.zxing.WriterException;
+import com.google.zxing.client.j2se.BufferedImageLuminanceSource;
 import com.google.zxing.common.BitMatrix;
 import com.google.zxing.common.CharacterSetECI;
+import com.google.zxing.common.HybridBinarizer;
 import com.google.zxing.qrcode.decoder.ErrorCorrectionLevel;
 import com.zengyu.QRException.InvalidColorException;
-import com.zengyu.QRException.InvalidLengthException;
 import com.zengyu.QRException.InvalidPathException;
 import com.zengyu.QRException.NullContentException;
 
+/**
+ * 二维码工具类
+ * 
+ * @author zengyu
+ *
+ */
 public class QRUtils implements IQR {
 	// 二维码内容
 	private String content = "";
-	
+
 	// 输出路径
 	private String outputPath = "";
-	
+
 	// 标志路径
 	private String logoPath = "";
-	
+
 	// 标志边长，为二维码边长的1/5
 	private int logoSize = 80;
-	
+
 	// 二维码边长，默认400
-	private int qrcodeSize = 600;
-	
+	private int qrcodeSize = 400;
+
 	// 二维码边距，为二维码边长的1/100
 	private int qrcodeMargin = 4;
-	
+
 	// 二维码颜色，默认黑色
 	private int qrcodeColor = 0xff000000;
-	
+
 	// 背景颜色，默认白色
 	private static final int WHITE = 0xFFFFFFFF;
-	
+
 	// 输出文件格式
 	private static final String FORMAT = "jpg";
-	
+
 	// 二维码图片
 	private BufferedImage qrcodeImage;
 
@@ -129,39 +144,37 @@ public class QRUtils implements IQR {
 	}
 
 	@Override
-	public BufferedImage getQrcodeImage() {
+	public BufferedImage getQRCodeImage() {
 		return qrcodeImage;
 	}
 
 	@Override
 	public QRUtils encode(String content) {
-		return encode(content, null, null, null, null);
+		return encode(content, null, null, 0, null);
 	}
 
 	@Override
 	public QRUtils encode(String content, String outputPath) {
-		return encode(content, outputPath, null, null, null);
+		return encode(content, outputPath, null, 0, null);
 	}
 
 	@Override
 	public QRUtils encode(String content, String outputPath, String logoPath) {
-		return encode(content, outputPath, logoPath, null, null);
+		return encode(content, outputPath, logoPath, 0, null);
 	}
 
 	@Override
-	public QRUtils encode(String content, String outputPath, String logoPath, String qrcodeSize) {
+	public QRUtils encode(String content, String outputPath, String logoPath, int qrcodeSize) {
 		return encode(content, outputPath, logoPath, qrcodeSize, null);
 	}
 
 	@Override
-	public QRUtils encode(String content, String outputPath, String logoPath, String qrcodeSize, String qrcodeColor) {
+	public QRUtils encode(String content, String outputPath, String logoPath, int qrcodeSize, String qrcodeColor) {
 		try {
 			if (formatParams(content, outputPath, logoPath, qrcodeSize, qrcodeColor)) {
 				return encode();
 			}
 		} catch (InvalidPathException e) {
-			e.printStackTrace();
-		} catch (InvalidLengthException e) {
 			e.printStackTrace();
 		} catch (InvalidColorException e) {
 			e.printStackTrace();
@@ -183,14 +196,11 @@ public class QRUtils implements IQR {
 	 *             空内容异常
 	 * @throws InvalidPathException
 	 *             路径无效异常
-	 * @throws InvalidLengthException
-	 *             长度无效异常
 	 * @throws InvalidColorException
 	 *             颜色无效异常
 	 */
-	private boolean formatParams(String content, String outputPath, String logoPath, String qrcodeSize,
-			String qrcodeColor)
-			throws NullContentException, InvalidPathException, InvalidLengthException, InvalidColorException {
+	private boolean formatParams(String content, String outputPath, String logoPath, int qrcodeSize, String qrcodeColor)
+			throws NullContentException, InvalidPathException, InvalidColorException {
 		if (content == null || content.trim() == "") {
 			throw new NullContentException("The content can't be empty.");
 		} else {
@@ -210,19 +220,10 @@ public class QRUtils implements IQR {
 				this.logoPath = logoPath.trim();
 			}
 		}
-		if (qrcodeSize != null) {
-			try {
-				int size = Integer.valueOf(qrcodeSize);
-				if (size == 0) {
-					throw new InvalidLengthException("The QR code size can't be zero.");
-				} else {
-					this.qrcodeSize = size;
-					this.logoSize = size / 5;
-					this.qrcodeMargin = size / 100;
-				}
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
+		if (qrcodeSize != 0) {
+			this.qrcodeSize = qrcodeSize;
+			this.logoSize = qrcodeSize / 5;
+			this.qrcodeMargin = qrcodeSize / 100;
 		}
 		if (qrcodeColor != null) {
 			try {
@@ -244,5 +245,49 @@ public class QRUtils implements IQR {
 			}
 		}
 		return true;
+	}
+
+	@Override
+	public QRUtils writeToFile(String outputPath) {
+		if (outputPath != null) {
+			if (outputPath.trim() == "") {
+				throw new InvalidPathException("The output path can't be empty string.");
+			} else {
+				this.outputPath = outputPath.trim();
+				return encode();
+			}
+		} else {
+			throw new InvalidPathException("Null output path.");
+		}
+	}
+
+	@Override
+	public String decode(String inputPath) {
+		if (inputPath == null || inputPath.trim() == "") {
+			throw new InvalidPathException("Invalid input path.");
+		}
+		String string = null;
+		try {
+			File file = new File(inputPath.trim());
+			if (!file.exists()) {
+				throw new FileNotFoundException("File not found.");
+			} else {
+				BufferedImage bufferedImage = ImageIO.read(file);
+				LuminanceSource source = new BufferedImageLuminanceSource(bufferedImage);
+				Binarizer binarizer = new HybridBinarizer(source);
+				BinaryBitmap binaryBitmap = new BinaryBitmap(binarizer);
+				Hashtable<DecodeHintType, Object> hints = new Hashtable<>();
+				hints.put(DecodeHintType.CHARACTER_SET, CharacterSetECI.UTF8);
+				Result result = new MultiFormatReader().decode(binaryBitmap, hints);
+				string = result.getText();
+				System.out.println("Output: " + string);
+				System.out.println("Decoding successful.");
+			}
+		} catch (IOException e) {
+			e.printStackTrace();
+		} catch (NotFoundException e) {
+			e.printStackTrace();
+		}
+		return string;
 	}
 }
