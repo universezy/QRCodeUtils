@@ -40,7 +40,7 @@ QRCodeUtils是一个基于[ZXing]()的二维码工具类，功能包括二维码
   <tr>
     <td id="li5">QRUtils encode(String content, String outputPath, String logoPath, int qrcodeSize, String qrcodeColor)</td>
     <td><ul><li>content: 二维码内容</li><li>outputPath: 二维码图片输出路径</li><li>logoPath: 二维码标志路径</li><li>qrcodeSize: 二维码尺寸</li><li>qrcodeColor: 二维码颜色，格式为"#"开头的7位RGB字符串"#000000"或者"0xff"开头的10位16进制RGB字符串"0xff000000"</li></ul></td>
-    <td><ul><li>content: 为空时抛出NullContentException异常</li><li>outputPath: 为空时不输出二维码图片文件，为空字符串时抛出InvalidPathException异常</li><li>logoPath: 为空时不使用中间的标志图案</li><li>qrcodeSize: 默认边长为400，为0时使用默认边长</li><li>qrcodeColor: 默认颜色为黑色，为白色时抛出InvalidColorException异常，建议使用与白色形成鲜明对比的颜色，否则可能造成无法二维码</li><li>返回工具类实例</li></ul></td>
+    <td><ul><li>content: 为空时抛出NullContentException异常</li><li>outputPath: 为空时不输出二维码图片文件，为空字符串时抛出InvalidPathException异常</li><li>logoPath: 为空时不使用中间的标志图案</li><li>qrcodeSize: 默认边长为400，为0时使用默认边长</li><li>qrcodeColor: 默认颜色为黑色，为白色时抛出InvalidColorException异常，建议使用与白色形成鲜明对比的颜色，否则可能造成无法识别二维码</li><li>返回工具类实例</li></ul></td>
   </tr>
   <tr>
     <td>QRUtils writeToFile(String outputPath)</td>
