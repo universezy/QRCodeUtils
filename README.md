@@ -84,6 +84,7 @@ Encoding successful.
 ```
 
 二维码图片：
+
 ![](https://github.com/frogfans/QRCodeUtils/blob/master/image/1522634604303.jpg?raw=true)
 
 - Decode
