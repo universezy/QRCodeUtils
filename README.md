@@ -1,7 +1,7 @@
 # QRCodeUtils
 ## About
 
-QRCodeUtils是一个基于[ZXing]()的二维码工具类，功能包括二维码生成和解析。
+QRCodeUtils是一个基于[ZXing](https://github.com/zxing/zxing)的二维码工具类，功能包括二维码生成和解析。
 
 ---
 ## Download
@@ -14,8 +14,8 @@ QRCodeUtils是一个基于[ZXing]()的二维码工具类，功能包括二维码
 <table>
   <tr>
     <th width=30%, bgcolor=lightgrey>Method</th>
-    <th width=20%, bgcolor=lightgrey>Param</th>
-    <th width="50%", bgcolor=lightgrey>Detail</th>
+    <th width=35%, bgcolor=lightgrey>Param</th>
+    <th width="35%", bgcolor=lightgrey>Detail</th>
   </tr>
   <tr>
     <td> QRUtils encode(String content)</td>
