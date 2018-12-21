@@ -6,7 +6,7 @@ QRCodeUtils是一个基于[ZXing](https://github.com/zxing/zxing)的二维码工
 ---
 ## Download
 
-[QRCodeUtils-3.3.2.jar](https://github.com/frogfans/QRCodeUtils/raw/master/QRCodeUtils-3.3.2.jar)
+[QRCodeUtils-3.3.2.jar](https://github.com/universezy/QRCodeUtils/raw/master/QRCodeUtils-3.3.2.jar)
 
 ---
 ## API
@@ -85,7 +85,7 @@ Encoding successful.
 
 二维码图片：
 
-![](https://github.com/frogfans/QRCodeUtils/blob/master/image/1522634604303.jpg?raw=true)
+![](image/1522634604303.jpg?raw=true)
 
 - Decode
 
@@ -127,9 +127,9 @@ jar文件名的版本号同ZXing的版本号。
 ---
 ### Licence
 
-#### [Apache License 2.0](https://github.com/frogfans/QRCodeUtils/blob/master/LICENSE)
+#### [Apache License 2.0](LICENSE)
 
 ---
 ### Feedback
 
-[Issues](https://github.com/frogfans/QRCodeUtils/issues)
+[Issues](https://github.com/universezy/QRCodeUtils/issues)
